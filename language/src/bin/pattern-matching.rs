@@ -152,12 +152,52 @@ fn bindings_example() {
     }
 }
 
+/// matching on parts of slice, The .. is called a "rest pattern," because it matches the rest of the slice
+fn subslice_patterns() {
+    let words = ["zHello","World","!","Run","Forrest"];
+    match &words {
+        ["Hello", "World", "!", ..] => println!("Hello World!"),
+        ["Foo", "Bar", ..] => println!("Baz"),
+        rest => println!("{:?}", rest),
+    }
+}
+
+fn subslice_patterns2() {
+    let words = ["hello","all","z"];
+    match &words {
+        // Ignore everything but the last element, which must be "!".
+        [.., "!"] => println!("!!!"),
+
+        // `start` is a slice of everything except the last element, which must be "z".
+        [start @ .., "z"] => println!("starts with: {:?}", start),
+
+        // `end` is a slice of everything but the first element, which must be "a".
+        ["a", end @ ..] => println!("ends with: {:?}", end),
+
+        rest => println!("{:?}", rest),
+    }
+}
+
+/// This macro accepts an expression and a pattern, and returns true if the pattern matches the expression
+fn matches_macro() {
+    // Using the `matches!` macro:
+    //matches!(self.partial_cmp(other), Some(Less));
+
+    // You can also use features like | patterns and if guards:
+    let foo = 'f';
+    assert!(matches!(foo, 'A'..='Z' | 'a'..='z'));
+    let bar = Some(4);
+    assert!(matches!(bar, Some(x) if x > 2));
+}
+
 fn main() {
-    if_let_examples();
-    while_let_examples();
-    char_range_patterns();
-    matching_structs();
-    bindings_example();
+    subslice_patterns();
+    subslice_patterns2();
+    // if_let_examples();
+    // while_let_examples();
+    // char_range_patterns();
+    // matching_structs();
+    // bindings_example();
 
     // We can use patterns to destructure structs, enums, tuples, and references
     // destructuring structs
