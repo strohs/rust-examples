@@ -20,17 +20,17 @@ fn spawning_threads() {
 fn join_handles() {
     // A JoinHandle is an owned value that, when we call the join method on it, will wait for
     // its thread to finish
-    let handle = thread::spawn(|| {
-        for i in 1..10 {
-            println!("hi number {} from the spawned thread!", i);
-            thread::sleep(Duration::from_millis(1));
-        }
-    });
-    for i in 1..5 {
-        println!("hi number {} from the main thread!", i);
-        thread::sleep(Duration::from_millis(1));
-    }
-    handle.join().unwrap();
+    let test_str = "how long am i";
+    let handle = thread::spawn(move || sim_comp(test_str));
+
+    let res = handle.join().unwrap();
+    println!("the answer is {}", &res);
+}
+
+fn sim_comp(val: &str) -> usize {
+    println!("in sim comp");
+    thread::sleep(Duration::from_millis(2000));
+    val.len()
 }
 
 fn closure_thread() {
@@ -59,7 +59,7 @@ fn closure_thread() {
 
 fn main() {
     //spawning_threads();
-    //join_handles();
+    join_handles();
     //let s = String::from("WAM");
-    closure_thread();
+    //closure_thread();
 }

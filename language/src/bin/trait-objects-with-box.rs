@@ -8,7 +8,6 @@ pub trait Draw: Debug {
 }
 
 
-
 #[derive(Debug)]
 pub struct Button {
     id: usize
