@@ -1,8 +1,8 @@
 /// Lifetime annotations describe the relationships of the lifetimes of multiple references to
 /// each other without affecting the lifetimes
 ///
-/// Ultimately, lifetime syntax is about connecting the lifetimes of various parameters and return
-/// values of functions. Once they’re connected, Rust has enough information to allow memory-safe
+/// Ultimately, lifetime syntax is about connecting the lifetimes of various parameters and **return
+/// values of functions**. Once they’re connected, Rust has enough information to allow memory-safe
 /// operations and disallow operations that would create dangling pointers or otherwise violate
 /// memory safety.
 ///
