@@ -12,8 +12,8 @@ impl Message {
         match self {
             Message::Quit => println!("i am quit"),
             Message::Move {x,y}=> println!("i am move {},{}", x,y),
-            Message::Write(s) => println!("i am write: {}", s),
-            Message::ChangeColor(r,g,b) => println!("I am ChangeColor {} {} {}",r,g,b)
+            Message::Write(s) => println!("i am Write: {}", s),
+            Message::ChangeColor(r,g,b) => println!("I am ChangeColor r:{} g:{} b:{}",r,g,b)
         }
     }
 }

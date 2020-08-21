@@ -2,7 +2,8 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use crate::List::{Cons, Nil};
 
-/// another variation of the List definition from [https://doc.rust-lang.org/book/ch15-01-box.html#using-boxt-to-get-a-recursive-type-with-a-known-size].
+/// another variation of the List definition from:
+/// [https://doc.rust-lang.org/book/ch15-01-box.html#using-boxt-to-get-a-recursive-type-with-a-known-size].
 /// The second element in the Cons variant is now RefCell<Rc<List>>, meaning that instead of
 /// having the ability to modify the i32 value as we did in Listing 15-24, we want to modify
 /// which List value a Cons variant is pointing to. We’re also adding a tail method to make it

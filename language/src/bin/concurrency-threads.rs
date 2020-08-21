@@ -34,13 +34,13 @@ fn sim_comp(val: &str) -> usize {
 }
 
 fn closure_thread() {
-    let mut s = String::from("KOOL");
-    let mut v = vec![String::from("A"), String::from("B"), String::from("C")];
+    //let mut v = vec![String::from("A"), String::from("B"), String::from("C")];
+    let mut v = vec!["A", "B", "C"];
 
     let handle = thread::spawn( move || {
-        s.push_str("-AID");
-        v.push(s);
-        println!("pushed string to v: {:?}", v);
+        let s = String::from("KOOL");
+        v.push( "ZZ" );
+        println!("pushed s to v: {:?}", v);
     });
     handle.join().unwrap();
 }
