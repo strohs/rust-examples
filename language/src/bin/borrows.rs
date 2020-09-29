@@ -53,5 +53,9 @@ fn has_odd(v: &Vec<i32>) -> bool {
 }
 
 fn main() {
+    let mut a = vec![2,4,6,8];
+    let b = &mut a;
+    b.push(99);
 
+    dbg!(&a);
 }

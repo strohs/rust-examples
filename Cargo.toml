@@ -2,5 +2,6 @@
 members = [
     "async-await",
     "language",
-    "lists"
+    "lists",
+    "smart-pointers"
 ]
