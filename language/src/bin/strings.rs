@@ -24,4 +24,21 @@ fn main() {
     let sli2 = " of slices";
     str1.push_str(sli2);
     println!("String concat slice= {}", str1);
+
+    // inserting into strings
+    let v = String::from("abcd");
+    println!("v length {} (in bytes)", v.len());
+    for i in 0..=v.len() {
+        let mut v1 = v.clone();
+        v1.insert_str(i, "()");
+        println!("v1 {}", v1);
+    }
+
+    let mut s = String::from("()");
+    let mut i: usize = 0;
+    for n in 0..2 {
+        s.insert_str(n, "()");
+        i += 2;
+    }
+    println!("final {}", s);
 }

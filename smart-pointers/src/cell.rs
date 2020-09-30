@@ -1,5 +1,11 @@
 use std::cell::UnsafeCell;
 
+/// Cell is a shareable mutable container. Cells provide 'interior mutability'
+///
+/// Shareable mutable containers exist to permit mutability in a controlled manner, even in the
+/// presence of aliasing. Cell is typically used with types that are `Copy` since `Cell.get()`
+/// returns a Copy of type T
+/// Cell is NOT thread-safe
 pub struct Cell<T> {
     value: UnsafeCell<T>,
 }
@@ -33,40 +39,42 @@ impl<T> Cell<T> {
     }
 }
 
-#[cfg(test)]
-mod test {
-
-    use super::Cell;
-    use std::sync::Arc;
-    use std::thread;
-
-    #[test]
-    fn bad() {
-        let x = Arc::new(Cell::new(0));
-        let x1 = Arc::clone(&x);
-        let jh1 = thread::spawn(move || {
-            for _ in 0..100_000 {
-                let x = x1.get();
-                x1.set(x + 1);
-            }
-        });
-        let x2 = Arc::clone(&x);
-        let jh2 = thread::spawn(|| {
-            for _ in 0..100_000 {
-                let x = x2.get();
-                x2.set(x + 1);
-            }
-        });
-        jh1.join().unwrap();
-        jh2.join().unwrap();
-        assert_eq!(x.get(), 2_000_000);
-    }
-
-    #[test]
-    fn bad2() {
-        let x = Cell::new(vec![42]);
-        let first = &x.get()[0];
-        x.set(vec![]);
-        eprintln!("{}", first);
-    }
-}
+// #[cfg(test)]
+// mod test {
+//
+//     use super::Cell;
+//     use std::sync::Arc;
+//     use std::thread;
+//
+//
+//     #[test]
+//     /// this test will fail due to threads interleaving their writes to `x`
+//     fn bad() {
+//         let x = Arc::new(Cell::new(0));
+//         let x1 = Arc::clone(&x);
+//         let jh1 = thread::spawn(move || {
+//             for _ in 0..100_000 {
+//                 let x = x1.get();
+//                 x1.set(x + 1);
+//             }
+//         });
+//         let x2 = Arc::clone(&x);
+//         let jh2 = thread::spawn(|| {
+//             for _ in 0..100_000 {
+//                 let x = x2.get();
+//                 x2.set(x + 1);
+//             }
+//         });
+//         jh1.join().unwrap();
+//         jh2.join().unwrap();
+//         assert_eq!(x.get(), 2_000_000);
+//     }
+//
+//     #[test]
+//     fn bad2() {
+//         let x = Cell::new(vec![42]);
+//         let first = &x.get()[0];
+//         x.set(vec![]);
+//         eprintln!("{}", first);
+//     }
+// }

@@ -1,6 +1,6 @@
 use std::cell::{UnsafeCell};
 use crate::cell::Cell;
-use std::ops::Deref;
+
 
 #[derive(Copy, Clone)]
 enum RefState {
@@ -9,9 +9,16 @@ enum RefState {
     Exclusive,
 }
 
-// implied by UnsafeCell
+// implied since we are using UnsafeCell which is !Sync
 // impl<T> !Sync for RefCell<T> {}
 
+/// RefCell is a shareable mutable container that allows interior mutability.
+///
+/// RefCell<T> uses Rust's lifetimes to implement 'dynamic borrowing', a process whereby one can
+/// claim temporary, exclusive, mutable access to the inner value. Borrows for RefCell<T>s are
+/// tracked *at runtime*, unlike Rust's native reference types which are entirely tracked
+/// statically, at compile time. Because RefCell<T> borrows are dynamic it is possible to attempt
+/// to borrow a value that is already mutably borrowed; when this happens it results in thread panic.
 pub struct RefCell<T> {
     value: UnsafeCell<T>,
     state: Cell<RefState>,
@@ -29,11 +36,9 @@ impl<T> RefCell<T> {
         match self.state.get() {
             RefState::Unshared => {
                 self.state.set(RefState::Shared(1));
-                // SAFETY: RefCell is not currently shared at all, so it is safe to give out a reference
                 Some( Ref{ refcell: self } )
             },
             RefState::Shared(share_count) => {
-                // SAFETY: only shared references have been given out, so it's safe to give out another
                 self.state.set(RefState::Shared(share_count + 1));
                 Some( Ref { refcell: self } )
             },
@@ -47,13 +52,13 @@ impl<T> RefCell<T> {
     pub fn borrow_mut(&self) -> Option<RefMut<'_, T>> {
         if let RefState::Unshared = self.state.get() {
             self.state.set(RefState::Exclusive);
-            // SAFETY: no other references have been given out since state would be Shared or Exclusive
             Some( RefMut { refcell: self } )
         } else {
             None
         }
     }
 }
+
 
 pub struct Ref<'refcell, T> {
     refcell: &'refcell RefCell<T>,
@@ -70,7 +75,7 @@ impl<T> std::ops::Deref for Ref<'_, T> {
     }
 }
 
-impl <T> Drop for Ref<'_, T> {
+impl<T> Drop for Ref<'_, T> {
     fn drop(&mut self) {
         match self.refcell.state.get() {
             RefState::Shared(1) => {
@@ -85,6 +90,9 @@ impl <T> Drop for Ref<'_, T> {
         }
     }
 }
+
+
+
 
 pub struct RefMut<'refcell, T> {
     refcell: &'refcell RefCell<T>,
@@ -119,5 +127,3 @@ impl <T> Drop for RefMut<'_, T> {
         }
     }
 }
-
-// todo 1:06:30 Rc()
