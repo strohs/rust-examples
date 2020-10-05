@@ -1,6 +1,5 @@
-use std::cell::{UnsafeCell};
 use crate::cell::Cell;
-
+use std::cell::UnsafeCell;
 
 #[derive(Copy, Clone)]
 enum RefState {
@@ -36,12 +35,12 @@ impl<T> RefCell<T> {
         match self.state.get() {
             RefState::Unshared => {
                 self.state.set(RefState::Shared(1));
-                Some( Ref{ refcell: self } )
-            },
+                Some(Ref { refcell: self })
+            }
             RefState::Shared(share_count) => {
                 self.state.set(RefState::Shared(share_count + 1));
-                Some( Ref { refcell: self } )
-            },
+                Some(Ref { refcell: self })
+            }
             RefState::Exclusive => {
                 // RefCell is currently exclusively borrowed, so don't give out anything
                 None
@@ -52,13 +51,12 @@ impl<T> RefCell<T> {
     pub fn borrow_mut(&self) -> Option<RefMut<'_, T>> {
         if let RefState::Unshared = self.state.get() {
             self.state.set(RefState::Exclusive);
-            Some( RefMut { refcell: self } )
+            Some(RefMut { refcell: self })
         } else {
             None
         }
     }
 }
-
 
 pub struct Ref<'refcell, T> {
     refcell: &'refcell RefCell<T>,
@@ -80,19 +78,16 @@ impl<T> Drop for Ref<'_, T> {
         match self.refcell.state.get() {
             RefState::Shared(1) => {
                 self.refcell.state.set(RefState::Unshared);
-            },
+            }
             RefState::Shared(count) => {
                 self.refcell.state.set(RefState::Shared(count - 1));
-            },
-            RefState::Exclusive | RefState::Unshared  => {
+            }
+            RefState::Exclusive | RefState::Unshared => {
                 unreachable!();
-            },
+            }
         }
     }
 }
-
-
-
 
 pub struct RefMut<'refcell, T> {
     refcell: &'refcell RefCell<T>,
@@ -115,15 +110,15 @@ impl<T> std::ops::DerefMut for RefMut<'_, T> {
     }
 }
 
-impl <T> Drop for RefMut<'_, T> {
+impl<T> Drop for RefMut<'_, T> {
     fn drop(&mut self) {
         match self.refcell.state.get() {
             RefState::Shared(_) | RefState::Unshared => {
                 unreachable!();
-            },
+            }
             RefState::Exclusive => {
                 self.refcell.state.set(RefState::Unshared);
-            },
+            }
         }
     }
 }
