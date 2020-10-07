@@ -4,7 +4,7 @@ use std::collections::HashMap;
 ///
 /// # Returns
 /// a HashMap of with a character as a key, and the number of times it occurs as the value
-fn frequencies (s: &str) -> HashMap<char, u32> {
+fn frequencies(s: &str) -> HashMap<char, u32> {
     let mut freqs: HashMap<char, u32> = HashMap::new();
     s.chars().for_each(|c| {
         let count = freqs.entry(c).or_insert(0);
@@ -16,9 +16,9 @@ fn frequencies (s: &str) -> HashMap<char, u32> {
 fn main() {
     let str1 = "this is a journey into sound";
 
-    let fr = frequencies( str1 );
+    let fr = frequencies(str1);
 
-    for (k,v) in &fr {
-        println!("{}::{}",k,v)
+    for (k, v) in &fr {
+        println!("{}::{}", k, v)
     }
 }
