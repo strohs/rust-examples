@@ -1,5 +1,5 @@
 use std::fs;
-use std::io::{ErrorKind, Read};
+use std::io::{ErrorKind, Read, BufRead};
 use std::io;
 use std::fs::File;
 use std::path::Path;
